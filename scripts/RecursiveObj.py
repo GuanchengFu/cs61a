@@ -90,20 +90,19 @@ def join_link(s, separator):
 
 
 def partitions(n, m):
-        """Return a linked list of partitions of n using parts of up to m.
-        Each partition is represented as a linked list.
-        """
-    if n == 0:
-        return Link(Link.empty) # A list containing the empty partition
-    elif n < 0 or m == 0:
-        return Link.empty
-    else:
-        using_m = partitions(n-m, m)
-        with_m = map_link(lambda s: Link(m, s), using_m)
-        without_m = partitions(n, m-1)
-        return with_m + without_m
+	"""Return a Linked List containing a list of Lists.
+	 """
+	if n == 0:
+		return Link(Link.empty)
+	elif n < 0 or m == 0:
+		return Link(Link.empty)
+	else:
+		using_m = partitions(n-m, m)
+		with_m = map_link(lambda s: Link(m, s), using_m)
+		without_m = partitions(n, m-1)
+		return with_m + without_m
 
 def print_partitions(n, m):
-    lists = partitions(n, m)
-    strings = map_link(lambda s: join_link(s, " + "), lists)
-    print(join_link(strings, "\n"))
+	lists = partitions(n, m)
+	strings = map_link(lambda s:join_link(s, " + "), lists)
+	print(join_link(strings, "\n"))
