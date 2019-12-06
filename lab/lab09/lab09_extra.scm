@@ -1,19 +1,29 @@
 ;; Extra Scheme Questions ;;
 
 
-; Q5
+; Q5  This is the 2019 spring lab version because the 2018 version can not show the picture.
 (define lst
-  'YOUR-CODE-HERE
+  (cons (cons 1 nil)
+        (cons 2 
+        	  (cons (cons 3 (cons 4 nil)) 
+        	  (cons 5 nil))))
 )
 
-; Q6
+
+
+
+; Q6  call f(g(x))
 (define (composed f g)
-  'YOUR-CODE-HERE
+  (lambda (x) (f (g x)))
 )
 
 ; Q7
 (define (remove item lst)
-  'YOUR-CODE-HERE
+  (define (notequal? x)
+  	      (if (= x item)
+  	      	  #f
+  	      	  #t))
+    (filter notequal? lst)
 )
 
 
