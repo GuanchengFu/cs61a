@@ -3,11 +3,11 @@
 ; Q2
 (define (over-or-under x y)
   (if (> x y)
-  		1
-  		(if (= x y)
-  			0
-  			-1)
-))
+  	  1
+  	  (if (= x y)
+  	  	  0
+  	  	  -1))
+)
 
 ;;; Tests
 (over-or-under 1 2)
@@ -19,11 +19,12 @@
 
 ; Q3
 (define (filter f lst)
-(       (if (null? list)
-			nil
-			(if (f (car lst))
-			(append (list (car lst)) (filter f (cdr lst)))
-			(filter f (cdr lst)))
+  (if (null? lst)
+  	  nil
+  	  (if (f(car lst))
+  	  	  (append (list (car lst)) (filter f (cdr lst))
+  	  	  	)
+  	  	  (filter f (cdr lst))))
 )
 
 ;;; Tests
@@ -34,7 +35,7 @@
 
 ; Q4
 (define (make-adder num)
-  'YOUR-CODE-HERE
+  (lambda (x) (+ num x))
 )
 
 ;;; Tests
