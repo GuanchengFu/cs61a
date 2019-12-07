@@ -40,7 +40,17 @@
 )
 
 (define (nodots s)
-
+  (if (null? s)
+      s
+      (if (pair? s)
+          (if (pair? (car s))
+          (cons (nodots (car s)) (nodots (cdr s)))
+          (if (pair? (cdr s))
+              (cons (car s) (nodots (cdr s)))
+              (if (null? (cdr s))
+                   s
+                   (cons (car s) (cons (cdr s) nil)))))
+          (cons s nil)))
 )
 
 ; Sets as sorted lists
