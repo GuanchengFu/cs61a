@@ -106,3 +106,94 @@ def print_partitions(n, m):
 	lists = partitions(n, m)
 	strings = map_link(lambda s:join_link(s, " + "), lists)
 	print(join_link(strings, "\n"))
+
+
+class Tree:
+
+	
+	def __init__(self, label, branches=()):
+		self.label = label
+		for branch in branches:
+			assert isinstance(branch, Tree)
+		self.branches = branches
+
+	def __repr__(self):
+		if self.branches:
+			#Guess the only explantation is that the __repr__ method in tuple 
+			#will invoke the __repr__ method for every elements inside.
+			return 'Tree({0}, {1})'.format(self.label, self.branches.__repr__())
+		else:
+			return 'Tree({0})'.format(self.label)
+
+	def is_leaf(self):
+		return not self.branches	
+
+
+
+def fib_tree(n):
+	if n == 0 or n == 1:
+		return Tree(n)
+	else:
+		left = fib_tree(n - 2)
+		right = fib_tree(n - 1)
+		return Tree(left.label + right.label, (left, right))
+
+
+def sum_labels(t):
+	return t.label + sum([sum_labels(b) for b in t.branches])
+
+
+
+def empty(s):
+	return s is Link.empty
+
+
+def set_contains(s, v):
+	"""Return true if set s contains v
+	>>> s = Link(4, Link(1, Link(5)))
+	>>> set_contains(s, 1)
+	True
+	>>> set_contains(s, 10)
+	False
+	"""
+	if empty(s):
+		return False
+	elif s.first == v:
+		return True
+	else:
+		return set_contains(s.rest, v)
+
+
+
+def adjoin_set(s, v):
+	if set_contains(s, v):
+		return s
+	else:
+		return Link(v, s)
+
+
+def intersect_set(set1, set2):
+	"""
+	>>> set1 = Link(1, Link(3, Link(5, Link(8))))
+	>>> set2 = Link(2, Link(3, Link(7, Link(8))))
+	>>> intersect_set(set1, set2)
+	Link(3, Link(8))
+	"""
+	if empty(set1) or empty(set2):
+		return Link.empty
+	else:
+		e1, e2 = set1.first, set2.first
+		if e1 == e2:
+			return Link(e1, intersect_set(set1.rest, set2))
+		elif e1 < e2:
+			return intersect_set(set1.rest, set2)
+		elif e2 < e1:
+			return intersect_set(set1, set2.rest)
+
+
+
+
+
+
+
+
