@@ -46,6 +46,11 @@ Suite 2:
     	>>> expr
     	Pair('+', Pair(Pair('+', Pair(1, Pair(2, nil))), Pair(Pair('*', Pair(1, Pair(4, nil))), nil)))
 
+    Case Q7:
+        >>> expr = read_line(" 'hello ")
+        >>> expr
+        Pair('quote', Pair('hello', nil))
+
 
 
 

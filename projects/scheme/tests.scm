@@ -57,10 +57,21 @@
       6))
 ; expect 57
 
+(define x 45)
+; expect x
+
+x
+; expect 45
+
+(define y '(cons 5 nil))
+; expect y
+
+y
+; expect (cons 5 ())
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Move the following (exit) line down the file to run additional tests. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(exit)
+
 
 
 ;;; 1.1.2
@@ -108,7 +119,7 @@ circumference
   (sum-of-squares (+ a 1) (* a 2)))
 (f 5)
 ; expect 136
-
+(exit)
 ;;; 1.1.6
 
 (define (abs x)

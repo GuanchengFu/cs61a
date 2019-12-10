@@ -63,7 +63,14 @@ def eval_all(expressions, env):
     """Evaluate each expression im the Scheme list EXPRESSIONS in
     environment ENV and return the value of the last."""
     # BEGIN PROBLEM 8
-    return scheme_eval(expressions.first, env)
+    if expressions is nil:
+    	return None
+    else:
+    	value = scheme_eval(expressions.first, env)
+    	if expressions.second is nil:
+    		return value
+    	else:
+    		return eval_all(expressions.second, env)
     # END PROBLEM 8
 
 ################
@@ -118,8 +125,16 @@ class Frame:
         child = Frame(self) # Create a new child with self as the parent
         # BEGIN PROBLEM 11
         "*** YOUR CODE HERE ***"
+        if len(formals) == len(vals):
+        	while formals is not nil:
+        		child.define(formals.first, vals.first)
+        		formals = formals.second
+        		vals = vals.second
+        	return child
+        else:
+        	raise SchemeError('formals and vals has different length.')
         # END PROBLEM 11
-        return child
+        
 
 ##############
 # Procedures #
@@ -185,6 +200,7 @@ class LambdaProcedure(Procedure):
         of values, for a lexically-scoped call evaluated in environment ENV."""
         # BEGIN PROBLEM 12
         "*** YOUR CODE HERE ***"
+        return self.env.make_child_frame(self.formals, args)
         # END PROBLEM 12
 
     def __str__(self):
@@ -222,6 +238,7 @@ def do_define_form(expressions, env):
     """Evaluate a define form."""
     check_form(expressions, 2)
     target = expressions.first
+
     #target is a symbol instead of list (for functions)
     if scheme_symbolp(target):
         check_form(expressions, 2, 2)
@@ -231,9 +248,20 @@ def do_define_form(expressions, env):
         env.define(target, value)
         return target
         # END PROBLEM 6
+    # target (f x) is a pair instead of a single symbol.
     elif isinstance(target, Pair) and scheme_symbolp(target.first):
         # BEGIN PROBLEM 10
         "*** YOUR CODE HERE ***"
+        """
+		should define a function in the frame.
+		expressions = Pair(defination, Pair(body, nil))
+		targets = defination
+        """
+        name = target.first
+        formals = target.second
+        body = expressions.second
+        env.define(name, LambdaProcedure(formals, body, env))
+        return name
         # END PROBLEM 10
     else:
         bad_target = target.first if isinstance(target, Pair) else target
@@ -244,6 +272,7 @@ def do_quote_form(expressions, env):
     check_form(expressions, 1, 1)
     # BEGIN PROBLEM 7
     "*** YOUR CODE HERE ***"
+    return expressions.first		
     # END PROBLEM 7
 
 def do_begin_form(expressions, env):
@@ -252,12 +281,17 @@ def do_begin_form(expressions, env):
     return eval_all(expressions, env)
 
 def do_lambda_form(expressions, env):
-    """Evaluate a lambda form."""
+    """Evaluate a lambda form.
+	Return a LambdaProcedure.
+	expressions take the following form: Pair(formals, Pair(body, nil))
+    """
     check_form(expressions, 2)
     formals = expressions.first
     check_formals(formals)
     # BEGIN PROBLEM 9
     "*** YOUR CODE HERE ***"
+    body = expressions.second
+    return LambdaProcedure(formals, body, env)
     # END PROBLEM 9
 
 def do_if_form(expressions, env):
