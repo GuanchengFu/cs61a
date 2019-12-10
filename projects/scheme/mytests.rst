@@ -27,4 +27,26 @@ Suite 1
     	nil
     	>>> test.current()
 
+Suite 2:
+
+	>>> from scheme_reader import *
+	>>> from scheme import *
+
+    Case Question5:
+    	>>> expr = read_line('(+ 2 2)')
+    	>>> print(expr.first)
+    	+
+    	>>> expr.first
+    	'+'
+    	>>> expr.second
+    	Pair(2, Pair(2, nil))
+
+    Case Q52:
+    	>>> expr = read_line('(+ (+ 1 2) (* 1 4))')
+    	>>> expr
+    	Pair('+', Pair(Pair('+', Pair(1, Pair(2, nil))), Pair(Pair('*', Pair(1, Pair(4, nil))), nil)))
+
+
+
+
 

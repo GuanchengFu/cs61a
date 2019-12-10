@@ -32,6 +32,13 @@ def scheme_eval(expr, env, _=None): # Optional third argument is ignored
     else:
         # BEGIN PROBLEM 5
         "*** YOUR CODE HERE ***"
+        operator = scheme_eval(first, env)
+        check_procedure(operator)
+        #This is a more elegent solution for this problem.
+        #lambda function can apply other arguments for the function.
+        arg_pairs = rest.map(lambda x: scheme_eval(x, env))
+        return scheme_apply(operator, arg_pairs, env)
+
         # END PROBLEM 5
 
 def self_evaluating(expr):
@@ -40,7 +47,11 @@ def self_evaluating(expr):
 
 def scheme_apply(procedure, args, env):
     """Apply Scheme PROCEDURE to argument values ARGS (a Scheme list) in
-    environment ENV."""
+    environment ENV.
+    procedure -- function
+    args -- A scheme list (constructed using Pair)
+    env -- The environment for the function to be executed in
+    """
     check_procedure(procedure)
     if isinstance(procedure, PrimitiveProcedure):
         return procedure.apply(args, env)
@@ -77,14 +88,21 @@ class Frame:
         """Define Scheme SYMBOL to have VALUE."""
         # BEGIN PROBLEM 3
         "*** YOUR CODE HERE ***"
+        self.bindings[symbol] = value
         # END PROBLEM 3
 
     def lookup(self, symbol):
         """Return the value bound to SYMBOL. Errors if SYMBOL is not found."""
         # BEGIN PROBLEM 3
         "*** YOUR CODE HERE ***"
+        if symbol in self.bindings:
+            return self.bindings[symbol]
+        else:
+            if self.parent == None:
+                raise SchemeError('unknown identifier: {0}'.format(symbol))
+            return self.parent.lookup(symbol)
         # END PROBLEM 3
-        raise SchemeError('unknown identifier: {0}'.format(symbol))
+        
 
     def make_child_frame(self, formals, vals):
         """Return a new local frame whose parent is SELF, in which the symbols
@@ -142,6 +160,13 @@ class PrimitiveProcedure(Procedure):
             args = args.second
         # BEGIN PROBLEM 4
         "*** YOUR CODE HERE ***"
+        if self.use_env:
+            python_args.append(env)
+        try:
+            return self.fn(*python_args)
+        except TypeError as e:
+            raise SchemeError('invalid number of arguments')
+
         # END PROBLEM 4
 
 class LambdaProcedure(Procedure):
@@ -197,10 +222,14 @@ def do_define_form(expressions, env):
     """Evaluate a define form."""
     check_form(expressions, 2)
     target = expressions.first
+    #target is a symbol instead of list (for functions)
     if scheme_symbolp(target):
         check_form(expressions, 2, 2)
         # BEGIN PROBLEM 6
         "*** YOUR CODE HERE ***"
+        value = scheme_eval(expressions.second.first, env)
+        env.define(target, value)
+        return target
         # END PROBLEM 6
     elif isinstance(target, Pair) and scheme_symbolp(target.first):
         # BEGIN PROBLEM 10

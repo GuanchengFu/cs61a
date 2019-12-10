@@ -73,6 +73,8 @@ class Pair:
         else:
             raise TypeError('ill-formed list')
 
+
+
 class nil:
     """The empty list"""
 
@@ -87,6 +89,7 @@ class nil:
 
     def map(self, fn):
         return self
+
 
 nil = nil() # Assignment hides the nil class; there is only one instance
 
