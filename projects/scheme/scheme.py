@@ -296,6 +296,7 @@ def do_lambda_form(expressions, env):
 
 def do_if_form(expressions, env):
     """Evaluate an if form."""
+    #expressions = Pair(predicate, Pair(true_result, Pair(false_result, nil)))
     check_form(expressions, 2, 3)
     if scheme_truep(scheme_eval(expressions.first, env)):
         return scheme_eval(expressions.second.first, env)
@@ -304,18 +305,43 @@ def do_if_form(expressions, env):
 
 def do_and_form(expressions, env):
     """Evaluate a (short-circuited) and form."""
+    #expressions = Pair(exec1, Pair(exec2, Pair(exec3, nil))) ...
     # BEGIN PROBLEM 13
+    if expressions is nil:
+    	return "#t"
+    value = scheme_eval(expressions.first, env)
+    if scheme_falsep(value):
+    	return "#f"
+    else:
+    	if expressions.second is nil:
+    		return value
+    	else:
+    		expressions = expressions.second
+    		return do_and_form(expressions, env)
     "*** YOUR CODE HERE ***"
     # END PROBLEM 13
 
 def do_or_form(expressions, env):
     """Evaluate a (short-circuited) or form."""
     # BEGIN PROBLEM 13
+    #expressions = Pair(exec1, Pair(exec2, Pair(exec3, nil))) ...
     "*** YOUR CODE HERE ***"
+    if expressions is nil:
+    	return "#f"
+    else:
+    	value = scheme_eval(expressions.first, env)
+    	if scheme_truep(value):
+    		return value
+    	else:
+    		expressions = expressions.second
+    		return do_or_form(expressions, env)
     # END PROBLEM 13
 
 def do_cond_form(expressions, env):
     """Evaluate a cond form."""
+    #expressions = Pair(condition1, Pair(condition2))
+    # every condition has the following form: Pair(predicate, Pair(result, nil))
+    # to choose the predicate: expressions.first.first
     while expressions is not nil:
         clause = expressions.first
         check_form(clause, 1)
@@ -328,11 +354,18 @@ def do_cond_form(expressions, env):
         if scheme_truep(test):
             # BEGIN PROBLEM 14
             "*** YOUR CODE HERE ***"
+            result_eval = clause.second
+            if result_eval is nil:
+            	return test
+            else:
+            	return eval_all(result_eval, env)
             # END PROBLEM 14
         expressions = expressions.second
+    return None
 
 def do_let_form(expressions, env):
     """Evaluate a let form."""
+    # expressions = Pair(bindings, Pair(body, nil))
     check_form(expressions, 2)
     let_env = make_let_frame(expressions.first, env)
     return eval_all(expressions.second, let_env)
@@ -342,9 +375,22 @@ def make_let_frame(bindings, env):
     BINDINGS. The Scheme list BINDINGS must have the form of a proper bindings
     list in a let expression: each item must be a list containing a symbol
     and a Scheme expression."""
+    #bindings = Pair(expr1, Pair(expr2, nil))
+    #expr1 = Pair(symbol, Pair(expression, nil))
     if not scheme_listp(bindings):
         raise SchemeError('bad bindings list in let form')
+    formals = nil    
+    vals = nil
+    while bindings is not nil:
+    	item = bindings.first
+    	check_form(item, 2, 2)
+    	formals = Pair(item.first, formals)
+    	vals = Pair(scheme_eval(item.second.first, env), vals)
+    	bindings = bindings.second
+    check_formals(formals)
+    return env.make_child_frame(formals, vals)
     # BEGIN PROBLEM 15
+
     "*** YOUR CODE HERE ***"
     # END PROBLEM 15
 

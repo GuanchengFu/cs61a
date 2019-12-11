@@ -119,7 +119,7 @@ circumference
   (sum-of-squares (+ a 1) (* a 2)))
 (f 5)
 ; expect 136
-(exit)
+
 ;;; 1.1.6
 
 (define (abs x)
@@ -216,6 +216,7 @@ circumference
 ((lambda (x y z) (+ x y (square z))) 1 2 3)
 ; expect 12
 
+
 (define (f x y)
   (let ((a (+ 1 (* x y)))
         (b (- 1 y)))
@@ -224,6 +225,11 @@ circumference
        (* a b))))
 (f 3 4)
 ; expect 456
+
+(exit)
+
+
+
 
 (define x 5)
 (+ (let ((x 3))
@@ -595,7 +601,7 @@ one-through-four
 ;;; Extra credit ;;;
 ;;;;;;;;;;;;;;;;;;;;
 
-(exit)
+
 
 ; Tail call optimization tests
 
@@ -611,6 +617,8 @@ one-through-four
 (sum 1001 0)
 ; expect 501501
 
+
+
 (define (sum n total)
   (begin 2 3
     (if (zero? n) total
@@ -622,7 +630,7 @@ one-through-four
 (sum 1001 0)
 ; expect 501501
 
-(exit)
+
 
 ; macro tests
 
