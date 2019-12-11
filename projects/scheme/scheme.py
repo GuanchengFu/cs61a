@@ -308,10 +308,10 @@ def do_and_form(expressions, env):
     #expressions = Pair(exec1, Pair(exec2, Pair(exec3, nil))) ...
     # BEGIN PROBLEM 13
     if expressions is nil:
-    	return "#t"
+    	return True
     value = scheme_eval(expressions.first, env)
     if scheme_falsep(value):
-    	return "#f"
+    	return False
     else:
     	if expressions.second is nil:
     		return value
@@ -327,7 +327,7 @@ def do_or_form(expressions, env):
     #expressions = Pair(exec1, Pair(exec2, Pair(exec3, nil))) ...
     "*** YOUR CODE HERE ***"
     if expressions is nil:
-    	return "#f"
+    	return False
     else:
     	value = scheme_eval(expressions.first, env)
     	if scheme_truep(value):
@@ -354,7 +354,9 @@ def do_cond_form(expressions, env):
         if scheme_truep(test):
             # BEGIN PROBLEM 14
             "*** YOUR CODE HERE ***"
+            #clause = Pair(predicate, Pair(result, nil))
             result_eval = clause.second
+            #result_eval = Pair(exec1, Pair(exec2, nil))
             if result_eval is nil:
             	return test
             else:
@@ -471,7 +473,7 @@ class MuProcedure(Procedure):
                     ||----w |
                     ||     ||
     """
-
+    #Pair(parameters, Pair(body, nil))
     def __init__(self, formals, body):
         """A procedure with formal parameter list FORMALS (a Scheme list) and
         Scheme list BODY as its definition."""
@@ -479,7 +481,8 @@ class MuProcedure(Procedure):
         self.body = body
 
     # BEGIN PROBLEM 16
-    "*** YOUR CODE HERE ***"
+    def make_call_frame(self, args, env):
+    	return env.make_child_frame(self.formals, args)
     # END PROBLEM 16
 
     def __str__(self):
@@ -495,6 +498,9 @@ def do_mu_form(expressions, env):
     formals = expressions.first
     check_formals(formals)
     # BEGIN PROBLEM 16
+    #return a MuProcedure
+    body = expressions.second
+    return MuProcedure(formals, body)
     "*** YOUR CODE HERE ***"
     # END PROBLEM 16
 
