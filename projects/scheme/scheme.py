@@ -564,11 +564,14 @@ def optimize_tail_calls(original_scheme_eval):
         """Evaluate Scheme expression EXPR in environment ENV. If TAIL,
         return a Thunk containing an expression for further evaluation.
         """
+        # is a list expression and tail is True
         if tail and not scheme_symbolp(expr) and not self_evaluating(expr):
             return Thunk(expr, env)
         else:
             result = Thunk(expr, env)
         # BEGIN
+        if isinstance(result Thunk):
+        	
         "*** YOUR CODE HERE ***"
         # END
     return optimized_eval

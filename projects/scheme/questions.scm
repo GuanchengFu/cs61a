@@ -12,7 +12,10 @@
 
 
 (define (zip pairs)
-  'replace-this-line)
+  (if (null? pairs)
+      (list nil nil)
+      (list (append (list (car (car pairs))) (car (zip (cdr pairs))))
+            (append (list (car (cdr (car pairs)))) (car (cdr (zip (cdr pairs))))))))
 
 ;; Problem 17
 ;; Returns a list of two-element lists
@@ -61,35 +64,34 @@
 (define let?    (check-special 'let))
 
 ;; Converts all let special forms in EXPR into equivalent forms using lambda
+;;; 1.primitives: atom? return itself
+;;; 2.quote: quoted? ''(+ 1 2) or '(quote (+ 1 2)) return the expr
+;;; 3.define or lambda: return the related version 
+;;; and convert all the let expression within it to lambda expression.
+;;; 4.let expression: return the related lambda expression.
+;;; !!! There can be multiple expressions within the body expression.
+;;; 5. otherwise '(+ 1 2) there might be elements within it that can be let expression.
 (define (let-to-lambda expr)
-  (cond ((atom? expr)
-         ; BEGIN PROBLEM 19
-         expr
-         ; END PROBLEM 19
-         )
-        ((quoted? expr)
-         ; BEGIN PROBLEM 19
-         (cdr expr)
-         ; END PROBLEM 19
-         )
-        ((or (lambda? expr)
-             (define? expr))
-         (let ((form   (car expr))
-               (params (cadr expr))
-               (body   (cddr expr)))
-           ; BEGIN PROBLEM 19
-           'replace-this-line
-           ; END PROBLEM 19
-           ))
-        ((let? expr)
-         (let ((values (cadr expr))
-               (body   (cddr expr)))
-           ; BEGIN PROBLEM 19
-           'replace-this-line
-           ; END PROBLEM 19
-           ))
-        (else
-         ; BEGIN PROBLEM 19
-         'replace-this-line
-         ; END PROBLEM 19
-         )))
+        (cond ((atom? expr)
+               expr)
+              ((quoted? expr)
+               expr)
+              ((or (lambda? expr) (define? expr))
+               ;;;(define x 5)    (lambda (x y) (+ x y))
+               (let ((form (car expr))
+                     (params (cadr expr))
+                     (body (cddr expr)))
+                     ;;;The body of let expression.
+                     (append (list form params) (map let-to-lambda body))
+                     ))
+               ;;;(let ((a 1) (b 2)) (+ a b))
+              ((let? expr)
+               ;;; values = ((a 1) (b 2))
+               ;;; (zip values) = ((a b) (1 2))
+               (let ((values (cadr expr))
+                     (body (cddr expr)))
+                    (define params (car (zip values)))
+                    (define args (car (cdr (zip values))))
+                    (cons (append (list 'lambda params) (map let-to-lambda body)) (map let-to-lambda args))
+                    ))
+              (else (map let-to-lambda expr))))
