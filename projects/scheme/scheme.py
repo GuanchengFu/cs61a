@@ -22,7 +22,7 @@ def scheme_eval(expr, env, _=None): # Optional third argument is ignored
         return env.lookup(expr)
     elif self_evaluating(expr):
         return expr
-
+        #workon
     # All non-atomic expressions are lists (combinations)
     if not scheme_listp(expr):
         raise SchemeError('malformed list: {0}'.format(repl_str(expr)))
@@ -33,11 +33,19 @@ def scheme_eval(expr, env, _=None): # Optional third argument is ignored
         # BEGIN PROBLEM 5
         "*** YOUR CODE HERE ***"
         operator = scheme_eval(first, env)
-        check_procedure(operator)
+        if isinstance(operator, MacroProcedure):
+        	"""The only difference between the macro procedure and the lambda procedure is that:
+        	The operands will be evaluated in the Lambda procedure while it is subsituted into 
+        	the MacroProcedure for further evaluation, which can be done by using the 
+        	scheme_eval function.
+        	"""
+        	return scheme_eval(operator.apply_macro(rest, env), env)
+        else:
+        	check_procedure(operator)
         #This is a more elegent solution for this problem.
         #lambda function can apply other arguments for the function.
-        arg_pairs = rest.map(lambda x: scheme_eval(x, env))
-        return scheme_apply(operator, arg_pairs, env)
+        	arg_pairs = rest.map(lambda x: scheme_eval(x, env))
+        	return scheme_apply(operator, arg_pairs, env)
 
         # END PROBLEM 5
 
@@ -245,7 +253,7 @@ def do_define_form(expressions, env):
         check_form(expressions, 2, 2)
         # BEGIN PROBLEM 6
         "*** YOUR CODE HERE ***"
-        value = scheme_eval(expressions.second.first, env, True)
+        value = scheme_eval(expressions.second.first, env)
         env.define(target, value)
         return target
         # END PROBLEM 6
@@ -411,7 +419,24 @@ def make_let_frame(bindings, env):
 def do_define_macro(expressions, env):
     """Evaluate a define-macro form."""
     # BEGIN Problem 21
+    #Pair(params, Pair(bodys, nil))
     "*** YOUR CODE HERE ***"
+    #there may have multiple body opeartions.
+    check_form(expressions, 2)
+    target = expressions.first
+    #target = (for formal iterable body)
+    if scheme_symbolp(target):
+    	raise SchemeError('not suitable expression: {0}'.format(target))
+    elif isinstance(target, Pair) and scheme_symbolp(target.first):
+    	func_name = target.first
+    	formals = target.second
+    	body = expressions.second
+    	env.define(func_name, MacroProcedure(formals, body, env))
+    	return func_name
+    else:
+        bad_target = target.first if isinstance(target, Pair) else target
+        raise SchemeError('non-symbol: {0}'.format(bad_target))
+
     # END Problem 21
 
 

@@ -601,7 +601,7 @@ one-through-four
 ;;; Extra credit ;;;
 ;;;;;;;;;;;;;;;;;;;;
 
-(exit)
+
 
 ; Tail call optimization tests
 
@@ -666,4 +666,4 @@ one-through-four
 (hyp 3 4)
 ; expect 5.000023178253949
 
-
+(exit)
