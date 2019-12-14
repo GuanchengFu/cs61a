@@ -570,6 +570,10 @@ def complete_apply(procedure, args, env):
     else:
         return val
 
+"""Thunk simply means a expression of code that needs to be further evaluated.
+If a thunk is returned, it means that a expression is returned and its frame is 
+eliminated.  The thunk should be evaluated at some point in the future, and it will
+creates new frames which will remarkably decrease the active frames during the recursion."""
 def optimize_tail_calls(original_scheme_eval):
     """Return a properly tail recursive version of an eval function."""
     def optimized_eval(expr, env, tail=False):
