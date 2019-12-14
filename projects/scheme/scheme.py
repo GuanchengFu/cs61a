@@ -66,10 +66,11 @@ def eval_all(expressions, env):
     if expressions is nil:
     	return None
     else:
-    	value = scheme_eval(expressions.first, env)
     	if expressions.second is nil:
-    		return value
+    		#The last operation is the tail context.
+    		return scheme_eval(expressions.first, env, True)
     	else:
+    		scheme_eval(expressions.first, env)
     		return eval_all(expressions.second, env)
     # END PROBLEM 8
 
@@ -244,7 +245,7 @@ def do_define_form(expressions, env):
         check_form(expressions, 2, 2)
         # BEGIN PROBLEM 6
         "*** YOUR CODE HERE ***"
-        value = scheme_eval(expressions.second.first, env)
+        value = scheme_eval(expressions.second.first, env, True)
         env.define(target, value)
         return target
         # END PROBLEM 6
@@ -299,26 +300,31 @@ def do_if_form(expressions, env):
     #expressions = Pair(predicate, Pair(true_result, Pair(false_result, nil)))
     check_form(expressions, 2, 3)
     if scheme_truep(scheme_eval(expressions.first, env)):
-        return scheme_eval(expressions.second.first, env)
+        return scheme_eval(expressions.second.first, env, True)
     elif len(expressions) == 3:
-        return scheme_eval(expressions.second.second.first, env)
+        return scheme_eval(expressions.second.second.first, env, True)
 
 def do_and_form(expressions, env):
     """Evaluate a (short-circuited) and form."""
     #expressions = Pair(exec1, Pair(exec2, Pair(exec3, nil))) ...
     # BEGIN PROBLEM 13
+
+    "*** YOUR CODE HERE ***"
     if expressions is nil:
     	return True
-    value = scheme_eval(expressions.first, env)
-    if scheme_falsep(value):
-    	return False
-    else:
-    	if expressions.second is nil:
+    elif expressions.second is nil:
+    	value = scheme_eval(expressions.first, env, True)
+    	if scheme_falsep(value):
+    		return False
+    	else:
     		return value
+    else:
+    	value = scheme_eval(expressions.first, env)
+    	if scheme_falsep(value):
+    		return False
     	else:
     		expressions = expressions.second
     		return do_and_form(expressions, env)
-    "*** YOUR CODE HERE ***"
     # END PROBLEM 13
 
 def do_or_form(expressions, env):
@@ -328,6 +334,12 @@ def do_or_form(expressions, env):
     "*** YOUR CODE HERE ***"
     if expressions is nil:
     	return False
+    elif expressions.second is nil:
+    	value = scheme_eval(expressions.first, env, True)
+    	if scheme_truep(value):
+    		return value
+    	else:
+    		return False
     else:
     	value = scheme_eval(expressions.first, env)
     	if scheme_truep(value):
@@ -569,9 +581,10 @@ def optimize_tail_calls(original_scheme_eval):
             return Thunk(expr, env)
         else:
             result = Thunk(expr, env)
+        while isinstance(result, Thunk):
+        	result = original_scheme_eval(result.expr, result.env)
+        return result
         # BEGIN
-        if isinstance(result Thunk):
-        	
         "*** YOUR CODE HERE ***"
         # END
     return optimized_eval
@@ -579,7 +592,7 @@ def optimize_tail_calls(original_scheme_eval):
 ################################################################
 # Uncomment the following line to apply tail call optimization #
 ################################################################
-# scheme_eval = optimize_tail_calls(scheme_eval)
+scheme_eval = optimize_tail_calls(scheme_eval)
 
 
 ####################
