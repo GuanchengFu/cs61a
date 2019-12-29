@@ -1,0 +1,5 @@
+There are many different types of expressions:
+1.Literal --numbers
+2.Name --variables (the eval function should return a )
+3.LambdaExpr --evaluates to a LambdaFunction.
+4.CallExpr
